@@ -1,12 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 @Controller('reset')
 export class ResetController {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceManagerService: WorkspaceManagerService,
   ) {}
 
   @Get()
@@ -14,18 +12,14 @@ export class ResetController {
     try {
       const workspaceId = '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
       
-      // Get the schema name for the workspace
-      const schemaName = this.workspaceDataSourceService.getSchemaName(workspaceId);
+      // Delete the existing workspace data
+      await this.workspaceManagerService.delete(workspaceId);
       
-      // Get a datasource for the specific workspace
-      const dataSource = await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
-      
-      // Execute query with correct schema
-      const result = await dataSource.query(`SELECT * FROM ${schemaName}.person`);
+      // Reinitialize the workspace with demo data
+      await this.workspaceManagerService.initDemo(workspaceId);
       
       return { 
-        message: 'Database reset successful',
-        queryResult: result 
+        message: 'Workspace reset successful',
       };
     } catch (error) {
       throw error;

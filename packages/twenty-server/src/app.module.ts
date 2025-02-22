@@ -29,6 +29,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
+import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ResetController } from './core/reset/reset.controller';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
@@ -61,6 +62,7 @@ const MIGRATED_REST_METHODS = [
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
     WorkspaceDataSourceModule,
+    WorkspaceManagerModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,

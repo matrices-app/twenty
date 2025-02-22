@@ -13,7 +13,16 @@ const taskHandlers: Record<string, TaskHandler> = {
        WHERE c.name ILIKE 'microsoft'
          AND p."deletedAt" IS NULL`,
     );
-    return microsoftPersons.length === 0 ? 10 : 0;
+
+    const allMicrosoftPersons = await dataSource.query(
+      `SELECT p.* 
+       FROM ${schemaName}.person p
+       JOIN ${schemaName}.company c ON p."companyId" = c.id
+       WHERE c.name ILIKE 'microsoft'`,
+    );
+
+    // Check if all Microsoft employees are deleted (have deletedAt set)
+    return microsoftPersons.length === 0 && allMicrosoftPersons.length > 0 ? 10 : 0;
   },
 
   // Rewards this task: Create a view that filters people down to those that work at Chegg Inc. Call the view "Chegg only".

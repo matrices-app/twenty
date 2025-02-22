@@ -16,6 +16,7 @@ services:
 
   server:
     image: axelsetyanto/twenty:${TAG:-latest}
+    pull_policy: always
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
       - docker-data:/app/docker-data
@@ -51,6 +52,7 @@ services:
 
   worker:
     image: axelsetyanto/twenty:${TAG:-latest}
+    pull_policy: always
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default

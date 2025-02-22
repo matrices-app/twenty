@@ -64,9 +64,8 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
-const isOnIpAddress = /^\d/.test(window.location.hostname);
 const isOnBaseDomain =
-  isOnIpAddress || window.location.hostname === 'localhost';
+  [`localhost`, `twenty.matrices.app`].indexOf(window.location.hostname) !== -1;
 
 export const DefaultLayout = () => {
   useAutoSignUp(isOnBaseDomain);

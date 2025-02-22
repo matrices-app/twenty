@@ -18,13 +18,30 @@ const taskHandlers: Record<string, TaskHandler> = {
 
   // Rewards this task: Create a view that filters people down to those that work at Chegg Inc. Call the view "Chegg only".
   'chegg-only': async (dataSource, schemaName) => {
+    // First get the Chegg Inc company ID
+    const cheggCompany = await dataSource.query(
+      `SELECT id FROM ${schemaName}.company 
+       WHERE name = 'Chegg Inc.'
+         AND "deletedAt" IS NULL
+       LIMIT 1`
+    );
+
+
+    if (cheggCompany.length === 0) {
+      return 0;
+    }
+
     const viewFilter = await dataSource.query(
       `SELECT vf.* 
        FROM ${schemaName}.view v
        JOIN ${schemaName}."viewFilter" vf ON v.id = vf."viewId"
        WHERE v.name = 'Chegg only'
-         AND vf."fieldMetadataId" = 'cdd372d1-311c-4077-8455-aee0e398fd4b'
-         AND vf.value = '{"isCurrentWorkspaceMemberSelected":false,"selectedRecordIds":["d387e53b-7993-4a3b-9e6f-5c32c69f9e33"]}'`,
+         AND vf."fieldMetadataId" = (
+           SELECT id FROM metadata."fieldMetadata" 
+           WHERE name = 'company'  
+           LIMIT 1
+         )
+         AND vf.value = '{"isCurrentWorkspaceMemberSelected":false,"selectedRecordIds":["${cheggCompany[0].id}"]}'`,
     );
     return viewFilter.length > 0 ? 5 : 0;
   },

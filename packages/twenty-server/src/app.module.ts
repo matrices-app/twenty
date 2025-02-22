@@ -26,6 +26,7 @@ import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { ResetController } from './core/reset/reset.controller';
@@ -59,6 +60,7 @@ const MIGRATED_REST_METHODS = [
     ModulesModule,
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
+    WorkspaceDataSourceModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,

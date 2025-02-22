@@ -1,5 +1,16 @@
+prod-publish:
+	make prod-build
+	make prod-tag
+	make prod-push
+
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty --platform=linux/amd64 . && cd -
+
+prod-tag:
+	docker tag twenty axelsetyanto/twenty
+
+prod-push:
+	docker push axelsetyanto/twenty
 
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty

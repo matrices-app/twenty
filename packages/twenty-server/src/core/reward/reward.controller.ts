@@ -5,7 +5,7 @@ type TaskHandler = (dataSource: any, schemaName: string) => Promise<number>;
 
 const taskHandlers: Record<string, TaskHandler> = {
   // Rewards this task: Delete all people that work at Microsoft
-  'delete-microsoft': async (dataSource, schemaName) => {
+  'delete-microsoft-people': async (dataSource, schemaName) => {
     const microsoftPersons = await dataSource.query(
       `SELECT p.* 
        FROM ${schemaName}.person p

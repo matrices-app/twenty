@@ -35,7 +35,7 @@ services:
 
       APP_SECRET: ${APP_SECRET}
 
-      # IS_MULTIWORKSPACE_ENABLED: true
+      IS_MULTIWORKSPACE_ENABLED: ${IS_MULTIWORKSPACE_ENABLED}
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully

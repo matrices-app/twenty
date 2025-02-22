@@ -16,6 +16,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui';
+import { useAutoSignUp } from '~/modules/auth/hooks/useAutoSignUp';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -63,12 +64,21 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
+const hostSegments = window.location.hostname.split('.');
+const isOnBaseDomain = hostSegments.length < 2;
+
 export const DefaultLayout = () => {
+  useAutoSignUp(isOnBaseDomain);
+
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
+
+  if (isOnBaseDomain) {
+    return null;
+  }
 
   return (
     <>

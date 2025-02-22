@@ -29,6 +29,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
+import { RewardController } from 'src/core/reward/reward.controller';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ResetController } from './core/reset/reset.controller';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
@@ -77,6 +78,7 @@ const MIGRATED_REST_METHODS = [
   ],
   controllers: [
     ResetController,
+    RewardController
   ],
 })
 export class AppModule {

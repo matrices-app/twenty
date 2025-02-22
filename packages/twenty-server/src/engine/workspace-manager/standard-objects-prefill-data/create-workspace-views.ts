@@ -72,14 +72,16 @@ export const createWorkspaceViews = async (
           'aggregateOperation',
         ])
         .values(
-          viewDefinition.fields.map((field) => ({
-            fieldMetadataId: field.fieldMetadataId,
-            position: field.position,
-            isVisible: field.isVisible,
-            size: field.size,
-            viewId: viewDefinition.id,
-            aggregateOperation: field.aggregateOperation,
-          })),
+          viewDefinition.fields
+            .filter((f) => f.fieldMetadataId)
+            .map((field) => ({
+              fieldMetadataId: field.fieldMetadataId,
+              position: field.position,
+              isVisible: field.isVisible,
+              size: field.size,
+              viewId: viewDefinition.id,
+              aggregateOperation: field.aggregateOperation,
+            })),
         )
         .execute();
     }
@@ -96,13 +98,15 @@ export const createWorkspaceViews = async (
           'viewId',
         ])
         .values(
-          viewDefinition.filters.map((filter: any) => ({
-            fieldMetadataId: filter.fieldMetadataId,
-            displayValue: filter.displayValue,
-            operand: filter.operand,
-            value: filter.value,
-            viewId: viewDefinition.id,
-          })),
+          viewDefinition.filters
+            .filter((f) => f.fieldMetadataId)
+            .map((filter) => ({
+              fieldMetadataId: filter.fieldMetadataId,
+              displayValue: filter.displayValue,
+              operand: filter.operand,
+              value: filter.value,
+              viewId: viewDefinition.id,
+            })),
         )
         .execute();
     }
@@ -123,13 +127,15 @@ export const createWorkspaceViews = async (
           'viewId',
         ])
         .values(
-          viewDefinition.groups.map((group: any) => ({
-            fieldMetadataId: group.fieldMetadataId,
-            isVisible: group.isVisible,
-            fieldValue: group.fieldValue,
-            position: group.position,
-            viewId: viewDefinition.id,
-          })),
+          viewDefinition.groups
+            .filter((g) => g.fieldMetadataId)
+            .map((group) => ({
+              fieldMetadataId: group.fieldMetadataId,
+              isVisible: group.isVisible,
+              fieldValue: group.fieldValue,
+              position: group.position,
+              viewId: viewDefinition.id,
+            })),
         )
         .execute();
     }

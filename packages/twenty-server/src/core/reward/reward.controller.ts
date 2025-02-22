@@ -100,7 +100,7 @@ const taskHandlers: Record<string, TaskHandler> = {
   },
 
   // 4) Complete a task for Regina Williams (status = 'DONE')
-  //   TODO: This task is not working bc assignee needs to be user
+  //   TODO: This is weird bc tasktarget is confusing
   'complete-task-for-regina-williams': async (dataSource, schemaName) => {
     const doneTasksForRegina = await dataSource.query(
       `SELECT t.*
@@ -116,7 +116,6 @@ const taskHandlers: Record<string, TaskHandler> = {
   },
 
   // 5) Mark Salesforce as the ideal customer profile
-  // TODO: idk where idealCustomerProfile is set
   'mark-salesforce-company-icp': async (dataSource, schemaName) => {
     const salesforceIcp = await dataSource.query(
       `SELECT *

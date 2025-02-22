@@ -64,8 +64,9 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
-const hostSegments = window.location.hostname.split('.');
-const isOnBaseDomain = hostSegments.length < 2;
+const isOnIpAddress = /^\d/.test(window.location.hostname);
+const isOnBaseDomain =
+  isOnIpAddress || window.location.hostname === 'localhost';
 
 export const DefaultLayout = () => {
   useAutoSignUp(isOnBaseDomain);

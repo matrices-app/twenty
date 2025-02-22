@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { ActionLink, IconGoogle, IconMicrosoft, MainButton } from 'twenty-ui';
@@ -48,6 +48,9 @@ const StyledProviderContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
+let skippingSync = false;
+
+// eslint-disable-next-line @nx/workspace-effect-components
 export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -103,6 +106,17 @@ export const SyncEmails = () => {
     PageHotkeyScope.SyncEmail,
     [continueWithoutSync],
   );
+
+  useEffect(() => {
+    if (skippingSync) {
+      return;
+    }
+    skippingSync = true;
+    continueWithoutSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
 
   if (currentUser?.onboardingStatus !== OnboardingStatus.SYNC_EMAIL) {
     return <></>;

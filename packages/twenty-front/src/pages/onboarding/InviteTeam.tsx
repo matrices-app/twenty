@@ -12,7 +12,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   Controller,
   SubmitHandler,
@@ -67,6 +67,9 @@ const validationSchema = z.object({
 
 type FormInput = z.infer<typeof validationSchema>;
 
+let skippingInvite = false;
+
+// eslint-disable-next-line @nx/workspace-effect-components
 export const InviteTeam = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -170,6 +173,17 @@ export const InviteTeam = () => {
     PageHotkeyScope.InviteTeam,
     [handleSubmit],
   );
+
+  useEffect(() => {
+    if (skippingInvite) {
+      return;
+    }
+    skippingInvite = true;
+    handleSkip();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
 
   if (currentUser?.onboardingStatus !== OnboardingStatus.INVITE_TEAM) {
     return <></>;

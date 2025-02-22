@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
-import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -17,6 +16,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared';
+import { H2Title, Loader, MainButton } from 'twenty-ui';
 import {
   OnboardingStatus,
   useActivateWorkspaceMutation,
@@ -35,6 +35,9 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+let creatingWorkspace = false;
+
+// eslint-disable-next-line @nx/workspace-effect-components
 export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
@@ -102,6 +105,38 @@ export const CreateWorkspace = () => {
       handleSubmit(onSubmit)();
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      if (creatingWorkspace) {
+        return;
+      }
+      creatingWorkspace = true;
+
+      try {
+        const result = await activateWorkspace({
+          variables: {
+            input: {
+              displayName: `Matrices`,
+            },
+          },
+        });
+
+        if (isDefined(result.errors)) {
+          throw result.errors ?? new Error(t`Unknown error`);
+        }
+        await loadCurrentUser();
+        setNextOnboardingStatus();
+      } catch (error: any) {
+        enqueueSnackBar(error?.message, {
+          variant: SnackBarVariant.Error,
+        });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
 
   if (onboardingStatus !== OnboardingStatus.WORKSPACE_ACTIVATION) {
     return null;

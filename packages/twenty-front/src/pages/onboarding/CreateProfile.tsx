@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -55,6 +55,11 @@ const validationSchema = z
 
 type Form = z.infer<typeof validationSchema>;
 
+const firstName = `Computer`;
+const lastName = `Operator`;
+let creatingProfile = false;
+
+// eslint-disable-next-line @nx/workspace-effect-components
 export const CreateProfile = () => {
   const { t } = useLingui();
   const onboardingStatus = useOnboardingStatus();
@@ -143,6 +148,44 @@ export const CreateProfile = () => {
     },
     PageHotkeyScope.CreateProfile,
   );
+
+  useEffect(() => {
+    (async () => {
+      if (!currentWorkspaceMember?.id || creatingProfile) {
+        return;
+      }
+      creatingProfile = true;
+
+      await updateOneRecord({
+        idToUpdate: currentWorkspaceMember.id,
+        updateOneRecordInput: {
+          name: {
+            firstName,
+            lastName,
+          },
+          colorScheme: 'System',
+        },
+      });
+
+      setCurrentWorkspaceMember((current) => {
+        if (isDefined(current)) {
+          return {
+            ...current,
+            name: {
+              firstName,
+              lastName,
+            },
+            colorScheme: 'System',
+          };
+        }
+        return current;
+      });
+      setNextOnboardingStatus();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return null;
 
   if (onboardingStatus !== OnboardingStatus.PROFILE_CREATION) {
     return null;

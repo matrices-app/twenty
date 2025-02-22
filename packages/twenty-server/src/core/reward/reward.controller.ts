@@ -1,4 +1,8 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Req } from '@nestjs/common';
+
+import { Request } from 'express';
+
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 type TaskHandler = (dataSource: any, schemaName: string) => Promise<number>;
@@ -22,7 +26,9 @@ const taskHandlers: Record<string, TaskHandler> = {
     );
 
     // Check if all Microsoft employees are deleted (deletedAt is set)
-    return microsoftPersons.length === 0 && allMicrosoftPersons.length > 0 ? 10 : 0;
+    return microsoftPersons.length === 0 && allMicrosoftPersons.length > 0
+      ? 10
+      : 0;
   },
 
   // Rewards this task: Create a view that filters people down to those that work at Chegg Inc. Call the view "Chegg only".
@@ -32,7 +38,7 @@ const taskHandlers: Record<string, TaskHandler> = {
       `SELECT id FROM ${schemaName}.company 
        WHERE name = 'Chegg Inc.'
          AND "deletedAt" IS NULL
-       LIMIT 1`
+       LIMIT 1`,
     );
 
     if (cheggCompany.length === 0) {
@@ -51,6 +57,7 @@ const taskHandlers: Record<string, TaskHandler> = {
          )
          AND vf.value = '{"isCurrentWorkspaceMemberSelected":false,"selectedRecordIds":["${cheggCompany[0].id}"]}'`,
     );
+
     return viewFilter.length > 0 ? 10 : 0;
   },
 
@@ -61,8 +68,9 @@ const taskHandlers: Record<string, TaskHandler> = {
       `SELECT *
        FROM ${schemaName}.company
        WHERE name = 'Schlumberger'
-         AND "deletedAt" IS NULL`
+         AND "deletedAt" IS NULL`,
     );
+
     return schlumberger.length > 0 ? 10 : 0;
   },
 
@@ -73,7 +81,7 @@ const taskHandlers: Record<string, TaskHandler> = {
       `SELECT p.*
        FROM ${schemaName}.person p
        JOIN ${schemaName}.company c ON p."companyId" = c.id
-       WHERE c.name ILIKE 'uber'`
+       WHERE c.name ILIKE 'uber'`,
     );
     // All Uber folks still active
     const activeUberPeople = await dataSource.query(
@@ -81,10 +89,11 @@ const taskHandlers: Record<string, TaskHandler> = {
        FROM ${schemaName}.person p
        JOIN ${schemaName}.company c ON p."companyId" = c.id
        WHERE c.name ILIKE 'uber'
-         AND p."deletedAt" IS NULL`
+         AND p."deletedAt" IS NULL`,
     );
+
     // Reward if no active Uber employees remain, but we had some to begin with
-    return (activeUberPeople.length === 0 && allUberPeople.length > 0) ? 10 : 0;
+    return activeUberPeople.length === 0 && allUberPeople.length > 0 ? 10 : 0;
   },
 
   // 3) Create a cat pet named "Bella"
@@ -94,8 +103,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        FROM ${schemaName}._pet
        WHERE name = 'Bella'
          AND species = 'cat'
-         AND "deletedAt" IS NULL`
+         AND "deletedAt" IS NULL`,
     );
+
     return bellaCat.length > 0 ? 10 : 0;
   },
 
@@ -110,8 +120,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        WHERE p."nameFirstName" ILIKE 'regina'
          AND p."nameLastName" ILIKE 'williams'
          AND t.status = 'DONE'
-         AND t."deletedAt" IS NULL`
+         AND t."deletedAt" IS NULL`,
     );
+
     return doneTasksForRegina.length > 0 ? 10 : 0;
   },
 
@@ -122,8 +133,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        FROM ${schemaName}.company
        WHERE name ILIKE 'salesforce'
          AND "idealCustomerProfile" = true
-         AND "deletedAt" IS NULL`
+         AND "deletedAt" IS NULL`,
     );
+
     return salesforceIcp.length > 0 ? 10 : 0;
   },
 
@@ -135,8 +147,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        WHERE p."nameFirstName" ILIKE 'vicki'
          AND p."nameLastName" ILIKE 'meyer'
          AND p.city = 'Old Margaretshire'
-         AND p."deletedAt" IS NULL`
+         AND p."deletedAt" IS NULL`,
     );
+
     return vicki.length > 0 ? 10 : 0;
   },
 
@@ -148,8 +161,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        FROM ${schemaName}.company
        WHERE name ILIKE 'uber'
          AND "deletedAt" IS NULL
-       LIMIT 1`
+       LIMIT 1`,
     );
+
     if (uberCompany.length === 0) {
       return 0;
     }
@@ -161,8 +175,9 @@ const taskHandlers: Record<string, TaskHandler> = {
        WHERE "companyId" = $1
          AND "amountAmountMicros" = 2000000000
          AND "deletedAt" IS NULL`,
-      [uberCompany[0].id]
+      [uberCompany[0].id],
     );
+
     return opp.length > 0 ? 10 : 0;
   },
 
@@ -177,8 +192,9 @@ const taskHandlers: Record<string, TaskHandler> = {
          AND p."nameLastName" ILIKE 'meyer'
          AND n."bodyV2Markdown" ILIKE '%hello%'
          AND n."deletedAt" IS NULL
-         AND nt."deletedAt" IS NULL`
+         AND nt."deletedAt" IS NULL`,
     );
+
     return matchingNotes.length > 0 ? 10 : 0;
   },
 
@@ -188,8 +204,9 @@ const taskHandlers: Record<string, TaskHandler> = {
       `SELECT *
        FROM ${schemaName}.blocklist
        WHERE handle = 'billy.mckinney@example.com'
-         AND "deletedAt" IS NULL`
+         AND "deletedAt" IS NULL`,
     );
+
     return billyBlock.length > 0 ? 10 : 0;
   },
 
@@ -199,8 +216,9 @@ const taskHandlers: Record<string, TaskHandler> = {
       `SELECT *
        FROM ${schemaName}.company
        WHERE name = 'Cisco Systems'
-         AND "deletedAt" IS NULL`
+         AND "deletedAt" IS NULL`,
     );
+
     return ciscoSystems.length > 0 ? 10 : 0;
   },
 };
@@ -209,17 +227,29 @@ const taskHandlers: Record<string, TaskHandler> = {
 export class RewardController {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   @Get(':taskId')
-  async getReward(@Param('taskId') taskId: string) {
+  async getReward(@Req() req: Request, @Param('taskId') taskId: string) {
     const handler = taskHandlers[taskId];
 
     if (!handler) {
       throw new NotFoundException(`Unknown task ID: ${taskId}`);
     }
 
-    const workspaceId = '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
+    const origin = `${req.protocol}://${req.get('host')}`;
+
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    const workspaceId = workspace.id;
     const dataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,

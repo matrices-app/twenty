@@ -14,11 +14,13 @@ import { join } from 'path';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
 
+import { RewardController } from 'src/core/reward/reward.controller';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
@@ -27,10 +29,9 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
-import { RewardController } from 'src/core/reward/reward.controller';
-import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ResetController } from './core/reset/reset.controller';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
@@ -64,6 +65,7 @@ const MIGRATED_REST_METHODS = [
     WorkspaceCacheStorageModule,
     WorkspaceDataSourceModule,
     WorkspaceManagerModule,
+    DomainManagerModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
@@ -76,10 +78,7 @@ const MIGRATED_REST_METHODS = [
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
-  controllers: [
-    ResetController,
-    RewardController
-  ],
+  controllers: [ResetController, RewardController],
 })
 export class AppModule {
   private static getConditionalModules(): DynamicModule[] {
